@@ -101,46 +101,46 @@ DEFAULT_CONFIG = {
         "prompt_suggestions": [
             {
                 "title": [
-                    "Help me study",
-                    "vocabulary for a college entrance exam",
+                    "帮我学习",
+                    "大学入学考试的词汇",
                 ],
-                "content": "Help me study vocabulary: write a sentence for me to fill in the blank, and I'll try to pick the correct option.",
+                "content": "帮我学习词汇：给我写一个需要填空的句子，我会尝试选择正确的选项。",
             },
             {
                 "title": [
-                    "Give me ideas",
-                    "for what to do with my kids' art",
+                    "给我一些想法",
+                    "关于如何处理孩子们的艺术作品",
                 ],
-                "content": "What are 5 creative things I could do with my kids' art? I don't want to throw them away, but it's also so much clutter.",
+                "content": "有哪5种创意方法可以处理孩子们的艺术作品？我不想扔掉它们，但它们也占用了太多空间。",
             },
             {
-                "title": ["Tell me a fun fact", "about the Roman Empire"],
-                "content": "Tell me a random fun fact about the Roman Empire",
+                "title": ["告诉我一个有趣的事实", "关于罗马帝国"],
+                "content": "告诉我一个关于罗马帝国的随机有趣事实",
             },
             {
                 "title": [
-                    "Show me a code snippet",
-                    "of a website's sticky header",
+                    "给我展示一个代码片段",
+                    "关于网站的粘性头部",
                 ],
-                "content": "Show me a code snippet of a website's sticky header in CSS and JavaScript.",
+                "content": "用CSS和JavaScript给我展示一个网站粘性头部的代码片段。",
             },
             {
                 "title": [
-                    "Explain options trading",
-                    "if I'm familiar with buying and selling stocks",
+                    "解释期权交易",
+                    "假设我熟悉买卖股票",
                 ],
-                "content": "Explain options trading in simple terms if I'm familiar with buying and selling stocks.",
+                "content": "假设我熟悉买卖股票，请用简单的术语解释期权交易。",
             },
             {
-                "title": ["Overcome procrastination", "give me tips"],
-                "content": "Could you start by asking me about instances when I procrastinate the most and then give me some suggestions to overcome it?",
+                "title": ["克服拖延症", "给我一些建议"],
+                "content": "你能先问我在什么情况下最容易拖延，然后给我一些克服它的建议吗？",
             },
             {
                 "title": [
-                    "Grammar check",
-                    "rewrite it for better readability ",
+                    "语法检查",
+                    "重写以提高可读性",
                 ],
-                "content": 'Check the following sentence for grammar and clarity: "[sentence]". Rewrite it for better readability while maintaining its original meaning.',
+                "content": '检查以下句子的语法和清晰度："[句子]"。在保持原意的同时重写它以提高可读性。',
             },
         ],
     },
