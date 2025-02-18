@@ -6,7 +6,6 @@
 	import { onMount, getContext } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import SensitiveInput from '$lib/components/common/SensitiveInput.svelte';
-	import Tooltip from '$lib/components/common/Tooltip.svelte';
 
 	const i18n = getContext('i18n');
 
@@ -104,7 +103,7 @@
 					<div class=" self-center text-xs font-medium">{$i18n.t('Web Search Engine')}</div>
 					<div class="flex items-center relative">
 						<select
-							class="dark:bg-gray-900 w-fit pr-8 rounded-sm px-2 p-1 text-xs bg-transparent outline-hidden text-right"
+							class="dark:bg-gray-900 w-fit pr-8 rounded px-2 p-1 text-xs bg-transparent outline-none text-right"
 							bind:value={webConfig.search.engine}
 							placeholder={$i18n.t('Select a engine')}
 							required
@@ -114,19 +113,6 @@
 								<option value={engine}>{engine}</option>
 							{/each}
 						</select>
-					</div>
-				</div>
-
-				<div class=" py-0.5 flex w-full justify-between">
-					<div class=" self-center text-xs font-medium">{$i18n.t('Full Context Mode')}</div>
-					<div class="flex items-center relative">
-						<Tooltip
-							content={webConfig.RAG_WEB_SEARCH_FULL_CONTEXT
-								? 'Inject the entire web results as context for comprehensive processing, this is recommended for complex queries.'
-								: 'Default to segmented retrieval for focused and relevant content extraction, this is recommended for most cases.'}
-						>
-							<Switch bind:state={webConfig.RAG_WEB_SEARCH_FULL_CONTEXT} />
-						</Tooltip>
 					</div>
 				</div>
 
@@ -141,7 +127,7 @@
 								<div class="flex w-full">
 									<div class="flex-1">
 										<input
-											class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
+											class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-none"
 											type="text"
 											placeholder={$i18n.t('Enter Searxng Query URL')}
 											bind:value={webConfig.search.searxng_query_url}
@@ -169,7 +155,7 @@
 								<div class="flex w-full">
 									<div class="flex-1">
 										<input
-											class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
+											class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-none"
 											type="text"
 											placeholder={$i18n.t('Enter Google PSE Engine Id')}
 											bind:value={webConfig.search.google_pse_engine_id}
@@ -274,7 +260,7 @@
 								<div class="flex w-full">
 									<div class="flex-1">
 										<input
-											class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
+											class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-none"
 											type="text"
 											placeholder={$i18n.t('Enter SearchApi Engine')}
 											bind:value={webConfig.search.searchapi_engine}
@@ -302,7 +288,7 @@
 								<div class="flex w-full">
 									<div class="flex-1">
 										<input
-											class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
+											class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-none"
 											type="text"
 											placeholder={$i18n.t('Enter SerpApi Engine')}
 											bind:value={webConfig.search.serpapi_engine}
@@ -353,7 +339,7 @@
 								<div class="flex w-full">
 									<div class="flex-1">
 										<input
-											class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
+											class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-none"
 											type="text"
 											placeholder={$i18n.t('Enter Bing Search V7 Endpoint')}
 											bind:value={webConfig.search.bing_search_v7_endpoint}
@@ -385,7 +371,7 @@
 							</div>
 
 							<input
-								class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
+								class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-none"
 								placeholder={$i18n.t('Search Result Count')}
 								bind:value={webConfig.search.result_count}
 								required
@@ -398,7 +384,7 @@
 							</div>
 
 							<input
-								class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
+								class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-none"
 								placeholder={$i18n.t('Concurrent Requests')}
 								bind:value={webConfig.search.concurrent_requests}
 								required
@@ -412,7 +398,7 @@
 						</div>
 
 						<input
-							class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
+							class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-none"
 							placeholder={$i18n.t(
 								'Enter domains separated by commas (e.g., example.com,site.org)'
 							)}
@@ -422,7 +408,7 @@
 				{/if}
 			</div>
 
-			<hr class="border-gray-100 dark:border-gray-850 my-2" />
+			<hr class=" dark:border-gray-850 my-2" />
 
 			<div>
 				<div class=" mb-1 text-sm font-medium">
@@ -436,15 +422,14 @@
 						</div>
 
 						<button
-							class="p-1 px-3 text-xs flex rounded-sm transition"
+							class="p-1 px-3 text-xs flex rounded transition"
 							on:click={() => {
-								webConfig.ENABLE_RAG_WEB_LOADER_SSL_VERIFICATION =
-									!webConfig.ENABLE_RAG_WEB_LOADER_SSL_VERIFICATION;
+								webConfig.web_loader_ssl_verification = !webConfig.web_loader_ssl_verification;
 								submitHandler();
 							}}
 							type="button"
 						>
-							{#if webConfig.ENABLE_RAG_WEB_LOADER_SSL_VERIFICATION === false}
+							{#if webConfig.web_loader_ssl_verification === false}
 								<span class="ml-2 self-center">{$i18n.t('On')}</span>
 							{:else}
 								<span class="ml-2 self-center">{$i18n.t('Off')}</span>
@@ -462,7 +447,7 @@
 						<div class=" w-20 text-xs font-medium self-center">{$i18n.t('Language')}</div>
 						<div class=" flex-1 self-center">
 							<input
-								class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
+								class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-none"
 								type="text"
 								placeholder={$i18n.t('Enter language codes')}
 								bind:value={youtubeLanguage}
@@ -477,7 +462,7 @@
 						<div class=" w-20 text-xs font-medium self-center">{$i18n.t('Proxy URL')}</div>
 						<div class=" flex-1 self-center">
 							<input
-								class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
+								class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-none"
 								type="text"
 								placeholder={$i18n.t('Enter proxy URL (e.g. https://user:password@host:port)')}
 								bind:value={youtubeProxyUrl}
