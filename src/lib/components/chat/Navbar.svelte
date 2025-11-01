@@ -18,6 +18,7 @@
 
 	import { slide } from 'svelte/transition';
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 
 	import ShareChatModal from '../chat/ShareChatModal.svelte';
 	import ModelSelector from '../chat/ModelSelector.svelte';
@@ -30,17 +31,27 @@
 	import Banner from '../common/Banner.svelte';
 	import Sidebar from '../icons/Sidebar.svelte';
 
+	import ChatBubbleDotted from '../icons/ChatBubbleDotted.svelte';
+	import ChatBubbleDottedChecked from '../icons/ChatBubbleDottedChecked.svelte';
+
+	import EllipsisHorizontal from '../icons/EllipsisHorizontal.svelte';
+	import ChatPlus from '../icons/ChatPlus.svelte';
+	import ChatCheck from '../icons/ChatCheck.svelte';
+	import Knobs from '../icons/Knobs.svelte';
+
 	const i18n = getContext('i18n');
 
 	export let initNewChat: Function;
-	export let title: string = $WEBUI_NAME;
 	export let shareEnabled: boolean = false;
 
 	export let chat;
 	export let history;
 	export let selectedModels;
 	export let showModelSelector = true;
-	export let showBanners = true;
+
+	export let onSaveTempChat: () => {};
+	export let archiveChatHandler: (id: string) => void;
+	export let moveChatHandler: (id: string, folderId: string) => void;
 
 	let closedBannerIds = [];
 
@@ -59,10 +70,10 @@
 	aria-label="New Chat"
 />
 
-<nav class="sticky top-0 z-30 w-full py-1 -mb-8 flex flex-col-row items-center drag-region">
+<nav class="sticky top-0 z-30 w-full py-1 -mb-8 flex flex-col items-center drag-region">
 	<div class="flex items-center w-full pl-1.5 pr-1">
 		<div
-			class=" bg-linear-to-b via-50% from-white via-white to-transparent dark:from-gray-900 dark:via-gray-900 dark:to-transparent pointer-events-none absolute inset-0 -bottom-7 z-[-1]"
+			class=" bg-linear-to-b via-40% to-97% from-white via-white to-transparent dark:from-gray-900 dark:via-gray-900 dark:to-transparent pointer-events-none absolute inset-0 -bottom-7 z-[-1]"
 		></div>
 
 		<div class=" flex max-w-full w-full mx-auto px-1.5 md:px-2 pt-0.5 bg-transparent">
@@ -98,6 +109,75 @@
 
 				<div class="self-start flex flex-none items-center text-gray-600 dark:text-gray-400">
 					<!-- <div class="md:hidden flex self-center w-[1px] h-5 mx-2 bg-gray-300 dark:bg-stone-700" /> -->
+
+					{#if $user?.role === 'user' ? ($user?.permissions?.chat?.temporary ?? true) && !($user?.permissions?.chat?.temporary_enforced ?? false) : true}
+						{#if !chat?.id}
+							<Tooltip content={$i18n.t(`Temporary Chat`)}>
+								<button
+									class="flex cursor-pointer px-2 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-850 transition"
+									id="temporary-chat-button"
+									on:click={async () => {
+										if (($settings?.temporaryChatByDefault ?? false) && $temporaryChatEnabled) {
+											// for proper initNewChat handling
+											await temporaryChatEnabled.set(null);
+										} else {
+											await temporaryChatEnabled.set(!$temporaryChatEnabled);
+										}
+
+										await goto('/');
+
+										// add 'temporary-chat=true' to the URL
+										if ($temporaryChatEnabled) {
+											window.history.replaceState(null, '', '?temporary-chat=true');
+										} else {
+											window.history.replaceState(null, '', location.pathname);
+										}
+									}}
+								>
+									<div class=" m-auto self-center">
+										{#if $temporaryChatEnabled}
+											<ChatBubbleDottedChecked className=" size-4.5" strokeWidth="1.5" />
+										{:else}
+											<ChatBubbleDotted className=" size-4.5" strokeWidth="1.5" />
+										{/if}
+									</div>
+								</button>
+							</Tooltip>
+						{:else if $temporaryChatEnabled}
+							<Tooltip content={$i18n.t(`Save Chat`)}>
+								<button
+									class="flex cursor-pointer px-2 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-850 transition"
+									id="save-temporary-chat-button"
+									on:click={async () => {
+										onSaveTempChat();
+									}}
+								>
+									<div class=" m-auto self-center">
+										<ChatCheck className=" size-4.5" strokeWidth="1.5" />
+									</div>
+								</button>
+							</Tooltip>
+						{/if}
+					{/if}
+
+					{#if $mobile && !$temporaryChatEnabled && chat && chat.id}
+						<Tooltip content={$i18n.t('New Chat')}>
+							<button
+								class=" flex {$showSidebar
+									? 'md:hidden'
+									: ''} cursor-pointer px-2 py-2 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-850 transition"
+								on:click={() => {
+									initNewChat();
+								}}
+								aria-label="New Chat"
+							>
+								<div class=" m-auto self-center">
+									<ChatPlus className=" size-4.5" strokeWidth="1.5" />
+								</div>
+							</button>
+						</Tooltip>
+					{/if}
+
 					{#if shareEnabled && chat && (chat.id || $temporaryChatEnabled)}
 						<Menu
 							{chat}
@@ -105,29 +185,17 @@
 							shareHandler={() => {
 								showShareChatModal = !showShareChatModal;
 							}}
-							downloadHandler={() => {
-								showDownloadChatModal = !showDownloadChatModal;
+							archiveChatHandler={() => {
+								archiveChatHandler(chat.id);
 							}}
+							{moveChatHandler}
 						>
 							<button
 								class="flex cursor-pointer px-2 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-850 transition"
 								id="chat-context-menu-button"
 							>
 								<div class=" m-auto self-center">
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke-width="1.5"
-										stroke="currentColor"
-										class="size-5"
-									>
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
-										/>
-									</svg>
+									<EllipsisHorizontal className=" size-5" strokeWidth="1.5" />
 								</div>
 							</button>
 						</Menu>
@@ -143,25 +211,7 @@
 								aria-label="Controls"
 							>
 								<div class=" m-auto self-center">
-									<AdjustmentsHorizontal className=" size-5" strokeWidth="0.5" />
-								</div>
-							</button>
-						</Tooltip>
-					{/if}
-
-					{#if $mobile}
-						<Tooltip content={$i18n.t('New Chat')}>
-							<button
-								class=" flex {$showSidebar
-									? 'md:hidden'
-									: ''} cursor-pointer px-2 py-2 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-850 transition"
-								on:click={() => {
-									initNewChat();
-								}}
-								aria-label="New Chat"
-							>
-								<div class=" m-auto self-center">
-									<PencilSquare className=" size-5" strokeWidth="2" />
+									<Knobs className=" size-5" strokeWidth="1" />
 								</div>
 							</button>
 						</Tooltip>
@@ -198,7 +248,7 @@
 		</div>
 	</div>
 
-	{#if $temporaryChatEnabled && $chatId === 'local'}
+	{#if $temporaryChatEnabled && ($chatId ?? '').startsWith('local:')}
 		<div class=" w-full z-30 text-center">
 			<div class="text-xs text-gray-500">{$i18n.t('Temporary Chat')}</div>
 		</div>
@@ -206,7 +256,7 @@
 
 	<div class="absolute top-[100%] left-0 right-0 h-fit">
 		{#if !history.currentId && !$chatId && ($banners.length > 0 || ($config?.license_metadata?.type ?? null) === 'trial' || (($config?.license_metadata?.seats ?? null) !== null && $config?.user_count > $config?.license_metadata?.seats))}
-			<div class=" w-full z-30 mt-5">
+			<div class=" w-full z-30">
 				<div class=" flex flex-col gap-1 w-full">
 					{#if ($config?.license_metadata?.type ?? null) === 'trial'}
 						<Banner
@@ -232,30 +282,28 @@
 						/>
 					{/if}
 
-					{#if showBanners}
-						{#each $banners.filter((b) => ![...JSON.parse(localStorage.getItem('dismissedBannerIds') ?? '[]'), ...closedBannerIds].includes(b.id)) as banner}
-							<Banner
-								{banner}
-								on:dismiss={(e) => {
-									const bannerId = e.detail;
+					{#each $banners.filter((b) => ![...JSON.parse(localStorage.getItem('dismissedBannerIds') ?? '[]'), ...closedBannerIds].includes(b.id)) as banner (banner.id)}
+						<Banner
+							{banner}
+							on:dismiss={(e) => {
+								const bannerId = e.detail;
 
-									if (banner.dismissible) {
-										localStorage.setItem(
-											'dismissedBannerIds',
-											JSON.stringify(
-												[
-													bannerId,
-													...JSON.parse(localStorage.getItem('dismissedBannerIds') ?? '[]')
-												].filter((id) => $banners.find((b) => b.id === id))
-											)
-										);
-									} else {
-										closedBannerIds = [...closedBannerIds, bannerId];
-									}
-								}}
-							/>
-						{/each}
-					{/if}
+								if (banner.dismissible) {
+									localStorage.setItem(
+										'dismissedBannerIds',
+										JSON.stringify(
+											[
+												bannerId,
+												...JSON.parse(localStorage.getItem('dismissedBannerIds') ?? '[]')
+											].filter((id) => $banners.find((b) => b.id === id))
+										)
+									);
+								} else {
+									closedBannerIds = [...closedBannerIds, bannerId];
+								}
+							}}
+						/>
+					{/each}
 				</div>
 			</div>
 		{/if}
